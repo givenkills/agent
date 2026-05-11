@@ -1,0 +1,32 @@
+# 环境变量（包含 API Key）
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.db
+
+# Node.js
+node_modules/
+frontend/node_modules/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 备份文件
+*~
+*.bak
+
+.chroma_db/

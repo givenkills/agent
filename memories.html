@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>已存档游戏 - AI 游戏生成助手</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .memories-container {
+      width: 900px;
+      margin: 20px auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.08);
+      padding: 24px;
+      min-height: 60vh;
+    }
+    .memories-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #eee;
+    }
+    .memories-header h1 {
+      font-size: 20px;
+      color: #333;
+    }
+    .back-btn {
+      padding: 8px 20px;
+      background: #666;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .back-btn:hover {
+      background: #555;
+    }
+    .game-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .game-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border-left: 4px solid #007fef;
+      transition: background 0.2s;
+    }
+    .game-item:hover {
+      background: #eef3f8;
+    }
+    .game-item .name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #222;
+    }
+    .game-item .type {
+      font-size: 13px;
+      color: #888;
+      margin-top: 4px;
+    }
+    .game-item .index {
+      font-size: 13px;
+      color: #aaa;
+      background: #eee;
+      padding: 2px 10px;
+      border-radius: 12px;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+    .empty-state p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+    .refresh-btn {
+      padding: 8px 20px;
+      background: #007fef;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .refresh-btn:hover {
+      background: #006ed6;
+    }
+  </style>
+</head>
+<body>
+  <div class="memories-container">
+    <div class="memories-header">
+      <h1>已存档的游戏</h1>
+      <div>
+        <button class="refresh-btn" onclick="loadGames()">刷新</button>
+        <a href="index.html" class="back-btn">返回对话</a>
+      </div>
+    </div>
+    <div class="game-list" id="gameList">
+      <div class="loading">加载中...</div>
+    </div>
+  </div>
+
+  <script>
+    async function loadGames() {
+      const list = document.getElementById('gameList');
+      list.innerHTML = '<div class="loading">加载中...</div>';
+
+      try {
+        const res = await fetch('http://127.0.0.1:5000/api/memories/names');
+        const data = await res.json();
+
+        if (!data.games || data.games.length === 0) {
+          list.innerHTML = `
+            <div class="empty-state">
+              <p>暂无已存档的游戏</p>
+              <p style="font-size:14px;">生成新游戏后，旧游戏会自动存档到这里</p>
+            </div>
+          `;
+          return;
+        }
+
+        list.innerHTML = data.games.map((game, index) => `
+          <div class="game-item">
+            <div>
+              <div class="name">${escapeHtml(game.game_name)}</div>
+              <div class="type">${escapeHtml(game.game_type || '未分类')}</div>
+            </div>
+            <span class="index">#${index + 1}</span>
+          </div>
+        `).join('');
+      } catch (err) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <p>加载失败，请检查后端是否启动</p>
+            <button class="refresh-btn" onclick="loadGames()">重试</button>
+          </div>
+        `;
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    loadGames();
+  </script>
+</body>
+</html>
