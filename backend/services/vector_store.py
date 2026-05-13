@@ -40,7 +40,7 @@ class VectorStore:
             meta["user_id"] = user_id
             meta["game_name"] = game_name
             meta["summary_json"] = summary
-            self._collection.add(ids=[doc_id], documents=[summary], metadatas=[meta])
+            self._collection.add(ids=[doc_id], documents=[game_name], metadatas=[meta])
         except Exception as e:
             print(f"添加记忆失败: {e}")
 
@@ -53,7 +53,7 @@ class VectorStore:
             meta["user_id"] = user_id
             meta["game_name"] = game_name
             meta["summary_json"] = summary
-            self._collection.upsert(ids=[doc_id], documents=[summary], metadatas=[meta])
+            self._collection.upsert(ids=[doc_id], documents=[game_name], metadatas=[meta])
         except Exception as e:
             print(f"更新记忆失败: {e}")
 
